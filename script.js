@@ -46,7 +46,53 @@ let analyser;
 //     animate();
 // })
 
-file.addEventListener('change', function() {
+// file.addEventListener('change', function() {
+//         const files = this.files;
+//         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+//         audio1.src = URL.createObjectURL(files[0]);
+//         audio1.load();
+//         audio1.play();
+//         audioSource = audioContext.createMediaElementSource(audio1);
+//         analyser = audioContext.createAnalyser();
+//         audioSource.connect(analyser);
+//         analyser.connect(audioContext.destination);
+//         analyser.fft = 1024;
+//         const bufferLength = analyser.frequencyBinCount;
+//         const dataArray = new Uint8Array(bufferLength);
+    
+//         const barWidth = canvas.width/bufferLength;
+//         let barHeight;
+//         let x;
+    
+//         function draw() {
+//             x = 0;
+//             ctx.clearRect(0, 0, canvas.width, canvas.height);
+//             ctx.fillStyle = 'black';
+//             ctx.fillRect(0,0, canvas.width, canvas.height);
+//             ctx.lineWidth = 2;
+//             ctx.strokeStyle = 'white';
+//             ctx.beginPath();
+//             analyser.getByteTimeDomainData(dataArray);
+//             const sliceWidth = canvas.width / bufferLength;
+//             for (let i=0; i < bufferLength; i++) {
+//                 const v = dataArray[i] / 128.0;
+//                 const y = v * (canvas.height / 2);
+
+//                 if (i === 0) {
+//                     ctx.moveTo(x, y);
+//                   } else {
+//                     ctx.lineTo(x, y);
+//                   }
+//                   x += sliceWidth;
+//             }
+//             ctx.lineTo(canvas.width, canvas.height / 2);
+//             ctx.stroke();
+//             requestAnimationFrame(draw);
+//         }
+//         draw();
+//     })
+
+    file.addEventListener('change', function() {
         const files = this.files;
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         audio1.src = URL.createObjectURL(files[0]);
@@ -56,14 +102,10 @@ file.addEventListener('change', function() {
         analyser = audioContext.createAnalyser();
         audioSource.connect(analyser);
         analyser.connect(audioContext.destination);
-        analyser.fft = 1024;
+        analyser.fft = 64;
         const bufferLength = analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
-    
-        const barWidth = canvas.width/bufferLength;
-        let barHeight;
-        let x;
-    
+
         function draw() {
             x = 0;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -74,18 +116,27 @@ file.addEventListener('change', function() {
             ctx.beginPath();
             analyser.getByteTimeDomainData(dataArray);
             const sliceWidth = canvas.width / bufferLength;
+            console.log(bufferLength)
             for (let i=0; i < bufferLength; i++) {
-                const v = dataArray[i] / 128.0;
-                const y = v * (canvas.height / 2);
+                ctx.save();
+                ctx.translate(canvas.width/2, canvas.height/2);
+                // ctx.rotate((((i / bufferLength) * 360) * Math.PI) / 180);
+
+                const v = dataArray[i] * 2.5;
+                const y = Math.sin((((i / bufferLength) * 360) * Math.PI) / 180) * v;
+                const x = Math.cos((((i / bufferLength) * 360) * Math.PI) / 180) * v;
 
                 if (i === 0) {
                     ctx.moveTo(x, y);
                   } else {
                     ctx.lineTo(x, y);
                   }
-                  x += sliceWidth;
+                
+
+                ctx.restore();
+
             }
-            ctx.lineTo(canvas.width, canvas.height / 2);
+            // ctx.lineTo(canvas.width, canvas.height / 2);
             ctx.stroke();
             requestAnimationFrame(draw);
         }
