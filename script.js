@@ -18,13 +18,12 @@ function drawBars(dataArray, bufferLength, analyser) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   analyser.getByteFrequencyData(dataArray);
   for (let i=0; i < bufferLength; i++) {
-    barHeight = dataArray[i];
+    barHeight = dataArray[i] * 5;
     ctx.fillStyle = 'white';
     ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     x += barWidth;
     }
   myReq = requestAnimationFrame(() => drawBars(dataArray, bufferLength, analyser));
-  shouldCancelNextAnimation = true;
 }
 
 function drawWaveForm(dataArray, bufferLength, analyser) {
@@ -52,7 +51,6 @@ function drawWaveForm(dataArray, bufferLength, analyser) {
       ctx.lineTo(canvas.width, canvas.height / 2);
       ctx.stroke();
       myReq = requestAnimationFrame(() => drawWaveForm(dataArray, bufferLength, analyser));
-      shouldCancelNextAnimation = true;
 }
 
 function drawCircle(dataArray, bufferLength, analyser) {
@@ -77,11 +75,11 @@ function drawCircle(dataArray, bufferLength, analyser) {
   ctx.restore();
   ctx.stroke();
   myReq = requestAnimationFrame(() => drawCircle(dataArray, bufferLength, analyser));
-  shouldCancelNextAnimation = true;
 }
 
 function animate(dataArray, bufferLength, analyser) {
   const select = document.getElementById('visualizer-select');
+  shouldCancelNextAnimation = true;
   switch(select.value) {
     case 'bars':
       drawBars(dataArray, bufferLength, analyser);
@@ -94,7 +92,6 @@ function animate(dataArray, bufferLength, analyser) {
       break;
     default:
       break;
-
   }
 }
 
