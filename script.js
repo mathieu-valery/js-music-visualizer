@@ -118,26 +118,7 @@ function animate(dataArray, bufferLength, analyser) {
   }
 }
 
-file.addEventListener('change', function() {
-  const files = file.files;
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  audio1.src = URL.createObjectURL(files[0]);
-  audio1.load();
-  audio1.play();
-  if (!audioSource) {
-    audioSource = audioContext.createMediaElementSource(audio1);
-    analyser = audioContext.createAnalyser();
-    audioSource.connect(analyser);
-    analyser.connect(audioContext.destination);
-    analyser.fft = 64;
-  }
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-  if (shouldCancelNextAnimation) cancelAnimationFrame(myReq)
-  animate(dataArray, bufferLength, analyser);
-})
-
-select.addEventListener('change', function() {
+function loadFile() {
   const files = file.files;
   if (files.length === 0) return
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -155,4 +136,12 @@ select.addEventListener('change', function() {
   const dataArray = new Uint8Array(bufferLength);
   if (shouldCancelNextAnimation) cancelAnimationFrame(myReq)
   animate(dataArray, bufferLength, analyser);
+}
+
+file.addEventListener('change', function() {
+  loadFile();
+})
+
+select.addEventListener('change', function() {
+  loadFile();
 })
