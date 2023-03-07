@@ -138,10 +138,5 @@ function loadFile() {
   animate(dataArray, bufferLength, analyser);
 }
 
-file.addEventListener('change', function() {
-  loadFile();
-})
-
-select.addEventListener('change', function() {
-  loadFile();
-})
+file.addEventListener('change', () => loadFile())
+select.addEventListener('change', () => loadFile())
