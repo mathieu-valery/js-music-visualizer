@@ -13,8 +13,7 @@ let shouldCancelNextAnimation = false;
 function drawBars(dataArray, bufferLength, analyser) {
   const barWidth = canvas.width/bufferLength;
   let barHeight;
-  let x;
-  x = 0;
+  let x = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   analyser.getByteFrequencyData(dataArray);
   for (let i=0; i < bufferLength; i++) {
@@ -27,8 +26,7 @@ function drawBars(dataArray, bufferLength, analyser) {
 }
 
 function drawWaveForm(dataArray, bufferLength, analyser) {
-      let x;
-      x = 0;
+      let x = 0;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'black';
       ctx.fillRect(0,0, canvas.width, canvas.height);
