@@ -94,7 +94,6 @@ function resizeCanvas(width, height) {
 }
 
 function animate(dataArray, bufferLength, analyser) {
-  const select = document.getElementById('visualizer-select');
   shouldCancelNextAnimation = true;
   switch(select.value) {
     case 'bars':
