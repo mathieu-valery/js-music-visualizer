@@ -18,7 +18,7 @@ function drawBars(dataArray, bufferLength, analyser) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   analyser.getByteFrequencyData(dataArray);
   for (let i=0; i < bufferLength; i++) {
-    barHeight = dataArray[i] * 5;
+    barHeight = dataArray[i] * 3;
     ctx.fillStyle = 'white';
     ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     x += barWidth;
@@ -53,7 +53,7 @@ function drawWaveForm(dataArray, bufferLength, analyser) {
       myReq = requestAnimationFrame(() => drawWaveForm(dataArray, bufferLength, analyser));
 }
 
-function drawCircle(dataArray, bufferLength, analyser) {
+function drawCircle(dataArray, bufferLength, analyser, amplification) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.lineWidth = 2;
   ctx.strokeStyle = 'white';
@@ -62,7 +62,7 @@ function drawCircle(dataArray, bufferLength, analyser) {
   ctx.save();
   ctx.translate(canvas.width/2, canvas.height/2);
   for (let i=0; i < bufferLength; i++) {
-      const v = dataArray[i] * 2.5;
+      const v = dataArray[i] * amplification;
       const y = Math.sin((((i / bufferLength) * 360) * Math.PI) / 180) * v;
       const x = Math.cos((((i / bufferLength) * 360) * Math.PI) / 180) * v;
 
@@ -74,7 +74,23 @@ function drawCircle(dataArray, bufferLength, analyser) {
   }
   ctx.restore();
   ctx.stroke();
-  myReq = requestAnimationFrame(() => drawCircle(dataArray, bufferLength, analyser));
+  myReq = requestAnimationFrame(() => drawCircle(dataArray, bufferLength, analyser, amplification));
+}
+
+function resizeCanvasToFullScreen() {
+  canvas.width = window.innerHeight;
+  canvas.height = window.innerHeight;
+  canvas.style.width = '100%'
+  canvas.style.height = '100%'
+  canvas.style.position = 'absolute'
+}
+
+function resizeCanvas(width, height) {
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.width = 'auto'
+  canvas.style.height = 'auto'
+  canvas.style.position = 'relative'
 }
 
 function animate(dataArray, bufferLength, analyser) {
@@ -82,13 +98,20 @@ function animate(dataArray, bufferLength, analyser) {
   shouldCancelNextAnimation = true;
   switch(select.value) {
     case 'bars':
+      resizeCanvasToFullScreen()
       drawBars(dataArray, bufferLength, analyser);
       break;
     case 'waveform':
+      resizeCanvasToFullScreen()
       drawWaveForm(dataArray, bufferLength, analyser);
       break;
     case 'circle':
-      drawCircle(dataArray, bufferLength, analyser);
+      resizeCanvas(600,600);
+      drawCircle(dataArray, bufferLength, analyser, 1.2);
+      break;
+    case 'ellipse':
+      resizeCanvasToFullScreen()
+      drawCircle(dataArray, bufferLength, analyser, 1.8);
       break;
     default:
       break;

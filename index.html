@@ -9,17 +9,20 @@
 </head>
 <body>
     <div id='container'>
-        <canvas id='canvas1'></canvas>
+        <div id='elements-flex'>
         <div id='select-container'>
             <label for='visualizer-select'>Choose a visualizer type:</label>
             <select name='visualizers' id='visualizer-select'>
                 <option value="bars">bars</option>
                 <option value="waveform">waveform</option>
                 <option value="circle">circle</option>
+                <option value="ellipse">ellipse</option>
             </select>
         </div>
         <audio id='audio1' controls></audio>
         <input type='file' id='fileupload' accept='audio/*' />
+        <canvas id='canvas1'></canvas>
+    </div>
 
     </div>
     <script src='script.js'></script>

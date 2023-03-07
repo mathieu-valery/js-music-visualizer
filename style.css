@@ -17,20 +17,19 @@
 
 #audio1 {
     width: 50%;
-    margin: 50px auto;
+    margin: 30px auto;
     display: block;
+    z-index: 1000;
 }
 
 #fileupload {
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     color: white;
+    z-index: 1000;
 }
 
 label[for=visualizer-select] {
     color: white;
+    z-index: 1000;
 }
 
 #visualizer-select {
@@ -38,10 +37,14 @@ label[for=visualizer-select] {
 }
 
 #select-container {
+    margin: 10px;
     display: flex;
-    position: relative;
     align-items: center;
-    left: 50%;
     flex-direction: column;
-    transform: translateX(-50%);
+}
+
+#elements-flex {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
