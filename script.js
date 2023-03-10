@@ -2,13 +2,15 @@ const file = document.getElementById('fileupload');
 
 const audio1 = document.getElementById('audio1');
 const canvas = document.getElementById('canvas1');
-canvas.width = window.innerHeight;
-canvas.height = window.innerWidth;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d');
 const select = document.getElementById('visualizer-select');
+const particles = []
 
 let audioSource;
 let shouldCancelNextAnimation = false;
+let isPlaying = false;
 
 function drawBars(dataArray, bufferLength, analyser) {
   const barWidth = canvas.width/bufferLength;
@@ -59,6 +61,7 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
   analyser.getByteTimeDomainData(dataArray);
   ctx.save();
   ctx.translate(canvas.width/2, canvas.height/2);
+
   // Circle is 2 mirrored half-circle, otherwise its not possible to close smoothly a full circle
   for (let i=0; i < bufferLength; i++) {
       const v = dataArray[i] * amplification;
@@ -81,50 +84,83 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
       } else {
         ctx.lineTo(x, y);
       }
-}
+  }
+
   ctx.restore();
 
   ctx.stroke();
+  const p = new Particle();
+  if (isPlaying) particles.push(p);
+
+  particles.forEach((particle, index) => {
+    if(!particle.isOutbound()) {
+      particle.draw()
+      particle.update();
+    } else {
+      particles.splice(index, 1);
+    }
+
+  })
   myReq = requestAnimationFrame(() => drawCircle(dataArray, bufferLength, analyser, amplification));
-}
-
-function resizeCanvasToFullScreen() {
-  canvas.width = window.innerHeight;
-  canvas.height = window.innerHeight;
-  canvas.style.width = '100%'
-  canvas.style.height = '100%'
-  canvas.style.position = 'absolute'
-}
-
-function resizeCanvas(width, height) {
-  canvas.width = width;
-  canvas.height = height;
-  canvas.style.width = 'auto'
-  canvas.style.height = 'auto'
-  canvas.style.position = 'relative'
 }
 
 function animate(dataArray, bufferLength, analyser) {
   shouldCancelNextAnimation = true;
   switch(select.value) {
     case 'bars':
-      resizeCanvasToFullScreen()
       drawBars(dataArray, bufferLength, analyser);
       break;
     case 'waveform':
-      resizeCanvasToFullScreen()
       drawWaveForm(dataArray, bufferLength, analyser);
       break;
     case 'circle':
-      resizeCanvas(600,600);
       drawCircle(dataArray, bufferLength, analyser, 1.2);
-      break;
-    case 'ellipse':
-      resizeCanvasToFullScreen()
-      drawCircle(dataArray, bufferLength, analyser, 1.8);
       break;
     default:
       break;
+  }
+}
+
+function randomRange(min, max) {
+  let range = max - min + 1;
+  return Math.floor( Math.random() * range ) + min
+}
+
+class Particle {
+  constructor() {
+    this.angle = (Math.random() * 360) * Math.PI / 180
+    this.x = Math.cos(this.angle) * 250;
+    this.y = Math.sin(this.angle) * 250;
+
+    this.radius = 2;
+    this.acc = randomRange(1,8);
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.restore();
+    ctx.stroke();
+  }
+
+  update() {
+    this.x = this.x + Math.cos(this.angle) * this.acc;
+    this.y = this.y + Math.sin(this.angle) * this.acc;
+  }
+
+  isOutbound() {
+    if(this.x < -canvas.width / 2 || this.x > canvas.width / 2 ||
+      this.y < -canvas.height /2 || this.y > canvas.height /2) {
+
+        return true
+    } else {
+      return false
+    }
+
   }
 }
 
@@ -148,5 +184,11 @@ function loadFile() {
   animate(dataArray, bufferLength, analyser);
 }
 
-file.addEventListener('change', () => loadFile())
-select.addEventListener('change', () => loadFile())
+file.addEventListener('change', () => loadFile());
+select.addEventListener('change', () => loadFile());
+audio1.addEventListener('pause', () => {
+  isPlaying = false
+})
+audio1.addEventListener('play', () => {
+  isPlaying = true
+})
