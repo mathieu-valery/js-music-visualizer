@@ -59,7 +59,7 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
   analyser.getByteTimeDomainData(dataArray);
   ctx.save();
   ctx.translate(canvas.width/2, canvas.height/2);
-  // Circle is 2 mirroired half-circle, otherwise its not possible to close smoothly a full circle
+  // Circle is 2 mirrored half-circle, otherwise its not possible to close smoothly a full circle
   for (let i=0; i < bufferLength; i++) {
       const v = dataArray[i] * amplification;
       const y = Math.sin((((i / (bufferLength -1)) * 180) * Math.PI) / 180) * v;
