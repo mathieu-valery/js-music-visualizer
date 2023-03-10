@@ -59,10 +59,11 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
   analyser.getByteTimeDomainData(dataArray);
   ctx.save();
   ctx.translate(canvas.width/2, canvas.height/2);
+  // Circle is 2 mirroired half-circle, otherwise its not possible to close smoothly a full circle
   for (let i=0; i < bufferLength; i++) {
       const v = dataArray[i] * amplification;
-      const y = Math.sin((((i / bufferLength) * 360) * Math.PI) / 180) * v;
-      const x = Math.cos((((i / bufferLength) * 360) * Math.PI) / 180) * v;
+      const y = Math.sin((((i / (bufferLength -1)) * 180) * Math.PI) / 180) * v;
+      const x = Math.cos((((i / (bufferLength -1)) * 180) * Math.PI) / 180) * v;
 
       if (i === 0) {
           ctx.moveTo(x, y);
@@ -70,7 +71,19 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
           ctx.lineTo(x, y);
         }
   }
+  for (let i=0; i < bufferLength; i++) {
+    const v = dataArray[i] * amplification;
+    const y = - Math.sin((((i / (bufferLength -1)) * 180) * Math.PI) / 180) * v;
+    const x = Math.cos((((i / (bufferLength -1)) * 180) * Math.PI) / 180) * v;
+
+    if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+}
   ctx.restore();
+
   ctx.stroke();
   myReq = requestAnimationFrame(() => drawCircle(dataArray, bufferLength, analyser, amplification));
 }
