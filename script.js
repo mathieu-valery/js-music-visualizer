@@ -93,17 +93,15 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
   ctx.stroke();
   const p = new Particle();
   if (isPlaying) particles.push(p);
-  analyser.getByteTimeDomainData(dataArray);
+  analyser.getByteFrequencyData(dataArray);
   let sum = 0
-  const lowFrequencyBars = 6
+  const lowFrequencyBars = 12
   for(let i=0; i < lowFrequencyBars; i++) {
     sum = sum + dataArray[i]
   }
   const moy = sum / lowFrequencyBars;
-  moy > 180 ? isPeaking = true : isPeaking = false;
+  moy > 200 ? isPeaking = true : isPeaking = false;
 
-  // console.log(dataArray)
-  // console.log(moy)
   particles.forEach((particle, index) => {
     if(!particle.isOutbound()) {
       particle.draw()
