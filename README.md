@@ -1,13 +1,10 @@
 # Javascript music visualizer
 
-Several music visualizers coded using Javascript
-
-This project is intended to be a playground for future visual experimentations
+Several music visualizers coded using Javascript and web audio API
 
 ## Visualizers coded:
-- bars (frequency spectrum)
+- circle (with particles synchronized to the beat)
 - waveform
-- circle
-- ellipse (circle in full screen)
+- bars (frequency spectrum)
 
 ![](app.png)
