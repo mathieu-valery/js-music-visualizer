@@ -11,12 +11,16 @@ let isPlaying = false;
 let isPeaking = false;
 
 function resizeCanvas() {
-  if (window.innerWidth > 1000) {
-    canvas.width = window.innerWidth * 1.3;
-    canvas.height = window.innerHeight * 1.3;
-  } else {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  if (window.innerWidth < 1000 && select.value === 'circle') {
     canvas.width = window.innerWidth * 2;
     canvas.height = window.innerHeight * 2;
+  }
+  if(window.innerWidth > 1000 && select.value === 'circle') {
+    canvas.width = window.innerWidth * 1.3;
+    canvas.height = window.innerHeight * 1.3;
   }
 }
 
@@ -205,7 +209,10 @@ function loadFile() {
 }
 
 file.addEventListener('change', () => loadFile());
-select.addEventListener('change', () => loadFile());
+select.addEventListener('change', () => {
+  loadFile();
+  resizeCanvas();
+});
 audio1.addEventListener('pause', () => isPlaying = false);
 audio1.addEventListener('play', () => isPlaying = true);
 addEventListener("resize", () => resizeCanvas());
