@@ -18,7 +18,7 @@ function resizeCanvas() {
     canvas.width = window.innerWidth * 2;
     canvas.height = window.innerHeight * 2;
   }
-  if(window.innerWidth > 1000 && select.value === 'circle') {
+  if (window.innerWidth > 1000 && select.value === 'circle') {
     canvas.width = window.innerWidth * 1.3;
     canvas.height = window.innerHeight * 1.3;
   }
