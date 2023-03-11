@@ -1,17 +1,26 @@
 const file = document.getElementById('fileupload');
-
 const audio1 = document.getElementById('audio1');
 const canvas = document.getElementById('canvas1');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d');
 const select = document.getElementById('visualizer-select');
 const particles = [];
-let isPeaking = false;
 
 let audioSource;
 let shouldCancelNextAnimation = false;
 let isPlaying = false;
+let isPeaking = false;
+
+function resizeCanvas() {
+  if (window.innerWidth > 1000) {
+    canvas.width = window.innerWidth * 1.3;
+    canvas.height = window.innerHeight * 1.3;
+  } else {
+    canvas.width = window.innerWidth * 2;
+    canvas.height = window.innerHeight * 2;
+  }
+}
+
+resizeCanvas();
 
 function drawBars(dataArray, bufferLength, analyser) {
   const barWidth = canvas.width/bufferLength;
@@ -87,12 +96,12 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
         ctx.lineTo(x, y);
       }
   }
-
   ctx.restore();
-
   ctx.stroke();
+
   const p = new Particle();
   if (isPlaying) particles.push(p);
+
   analyser.getByteFrequencyData(dataArray);
   let sum = 0
   const lowFrequencyBars = 12
@@ -141,7 +150,6 @@ class Particle {
     this.angle = (Math.random() * 360) * Math.PI / 180
     this.x = Math.cos(this.angle) * 250;
     this.y = Math.sin(this.angle) * 250;
-
     this.radius = 2;
     this.acc = randomRange(1,8);
   }
@@ -169,12 +177,10 @@ class Particle {
   isOutbound() {
     if(this.x < -canvas.width / 2 || this.x > canvas.width / 2 ||
       this.y < -canvas.height /2 || this.y > canvas.height /2) {
-
-        return true
+      return true
     } else {
       return false
     }
-
   }
 }
 
@@ -200,13 +206,6 @@ function loadFile() {
 
 file.addEventListener('change', () => loadFile());
 select.addEventListener('change', () => loadFile());
-audio1.addEventListener('pause', () => {
-  isPlaying = false
-})
-audio1.addEventListener('play', () => {
-  isPlaying = true
-})
-addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+audio1.addEventListener('pause', () => isPlaying = false);
+audio1.addEventListener('play', () => isPlaying = true);
+addEventListener("resize", () => resizeCanvas());
