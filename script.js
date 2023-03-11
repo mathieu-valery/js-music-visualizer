@@ -6,7 +6,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d');
 const select = document.getElementById('visualizer-select');
-const particles = []
+const particles = [];
+let isPeaking = false;
 
 let audioSource;
 let shouldCancelNextAnimation = false;
@@ -18,6 +19,7 @@ function drawBars(dataArray, bufferLength, analyser) {
   let x = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   analyser.getByteFrequencyData(dataArray);
+
   for (let i=0; i < bufferLength; i++) {
     barHeight = dataArray[i] * 3;
     ctx.fillStyle = 'white';
@@ -91,7 +93,17 @@ function drawCircle(dataArray, bufferLength, analyser, amplification) {
   ctx.stroke();
   const p = new Particle();
   if (isPlaying) particles.push(p);
+  analyser.getByteTimeDomainData(dataArray);
+  let sum = 0
+  const lowFrequencyBars = 6
+  for(let i=0; i < lowFrequencyBars; i++) {
+    sum = sum + dataArray[i]
+  }
+  const moy = sum / lowFrequencyBars;
+  moy > 180 ? isPeaking = true : isPeaking = false;
 
+  // console.log(dataArray)
+  // console.log(moy)
   particles.forEach((particle, index) => {
     if(!particle.isOutbound()) {
       particle.draw()
@@ -150,6 +162,10 @@ class Particle {
   update() {
     this.x = this.x + Math.cos(this.angle) * this.acc;
     this.y = this.y + Math.sin(this.angle) * this.acc;
+    if(isPeaking) {
+      this.x = this.x + Math.cos(this.angle) *6;
+      this.y = this.y + Math.sin(this.angle) *6;
+    }
   }
 
   isOutbound() {
@@ -192,3 +208,7 @@ audio1.addEventListener('pause', () => {
 audio1.addEventListener('play', () => {
   isPlaying = true
 })
+addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
